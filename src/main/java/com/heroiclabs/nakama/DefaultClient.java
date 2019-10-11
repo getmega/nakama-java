@@ -29,10 +29,12 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 import io.grpc.stub.MetadataUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
+import lombok.val;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -49,6 +51,8 @@ public class DefaultClient implements Client {
     private final ManagedChannel managedChannel;
     private final NakamaGrpc.NakamaFutureStub stub;
     private final Metadata basicAuthMetadata;
+
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     /**
      * A client to interact with Nakama server.
@@ -139,10 +143,14 @@ public class DefaultClient implements Client {
       return Futures.transformAsync(future, new AsyncFunction<com.heroiclabs.nakama.api.Session, Session>() {
           @Override
           public ListenableFuture<Session> apply(@Nullable final com.heroiclabs.nakama.api.Session input) {
+              if (input == null) {
+                  return Futures.immediateFailedFuture(new Throwable("input is null"));
+              }
+
               final Session result = new DefaultSession(input.getToken(), input.getCreated());
               return Futures.immediateFuture(result);
           }
-      });
+      }, executor);
     }
 
     @Override
@@ -177,7 +185,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> addFriends(@NonNull final Session session, final Iterable<String> ids, final String... usernames) {
-        final var builder = AddFriendsRequest.newBuilder();
+        val builder = AddFriendsRequest.newBuilder();
         if (ids != null) {
             builder.addAllIds(ids);
         }
@@ -542,7 +550,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> blockFriends(@NonNull final Session session, final Iterable<String> ids, final String... usernames) {
-        final var builder = BlockFriendsRequest.newBuilder();
+        val builder = BlockFriendsRequest.newBuilder();
         if (ids != null) {
             builder.addAllIds(ids);
         }
@@ -569,7 +577,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Group> createGroup(@NonNull final Session session, @NonNull final String name, final String description, final String avatarUrl, final String langTag) {
-        final var builder = CreateGroupRequest.newBuilder().setName(name);
+        val builder = CreateGroupRequest.newBuilder().setName(name);
 
         if (description != null) {
             builder.setDescription(description);
@@ -586,7 +594,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Group> createGroup(@NonNull final Session session, @NonNull final String name, final String description, final String avatarUrl, final String langTag, final boolean open) {
-        final var builder = CreateGroupRequest.newBuilder().setName(name).setOpen(open);
+        val builder = CreateGroupRequest.newBuilder().setName(name).setOpen(open);
 
         if (description != null) {
             builder.setDescription(description);
@@ -608,7 +616,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> deleteFriends(@NonNull final Session session, final Iterable<String> ids, final String... usernames) {
-        final var builder = DeleteFriendsRequest.newBuilder();
+        val builder = DeleteFriendsRequest.newBuilder();
         if (ids != null) {
             builder.addAllIds(ids);
         }
@@ -660,13 +668,13 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Users> getUsers(@NonNull final Session session, @NonNull final String... ids) {
-        final var builder = GetUsersRequest.newBuilder().addAllIds(Arrays.asList(ids));
+        val builder = GetUsersRequest.newBuilder().addAllIds(Arrays.asList(ids));
         return getStub(session).getUsers(builder.build());
     }
 
     @Override
     public ListenableFuture<Users> getUsers(@NonNull final Session session, final Iterable<String> ids, final String... usernames) {
-        final var builder = GetUsersRequest.newBuilder();
+        val builder = GetUsersRequest.newBuilder();
         if (ids != null) {
             builder.addAllIds(ids);
         }
@@ -678,7 +686,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Users> getUsers(@NonNull final Session session, final Iterable<String> ids, final Iterable<String> usernames, final String... facebookIds) {
-        final var builder = GetUsersRequest.newBuilder();
+        val builder = GetUsersRequest.newBuilder();
         if (ids != null) {
             builder.addAllIds(ids);
         }
@@ -793,7 +801,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<ChannelMessageList> listChannelMessages(@NonNull final Session session, @NonNull final String channelId, final int limit, final String cursor) {
-        final var builder = ListChannelMessagesRequest.newBuilder().setChannelId(channelId);
+        val builder = ListChannelMessagesRequest.newBuilder().setChannelId(channelId);
         if (limit > 0) {
             builder.setLimit(Int32Value.newBuilder().setValue(limit).build());
         }
@@ -805,7 +813,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<ChannelMessageList> listChannelMessages(@NonNull final Session session, @NonNull final String channelId, final int limit, final String cursor, final boolean forward) {
-        final var builder = ListChannelMessagesRequest.newBuilder().setChannelId(channelId);
+        val builder = ListChannelMessagesRequest.newBuilder().setChannelId(channelId);
         builder.setForward(BoolValue.newBuilder().setValue(forward).getDefaultInstanceForType());
         if (limit > 0) {
             builder.setLimit(Int32Value.newBuilder().setValue(limit).build());
@@ -838,7 +846,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<GroupList> listGroups(@NonNull final Session session, final String name, final int limit, final String cursor) {
-        final var builder = ListGroupsRequest.newBuilder();
+        val builder = ListGroupsRequest.newBuilder();
         if (name != null) {
             builder.setName(name);
         }
@@ -872,7 +880,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecordList> listLeaderboardRecords(@NonNull final Session session, @NonNull final String leaderboardId, final Iterable<String> ownerIds, final int expiry, final int limit, final String cursor) {
-        final var builder = ListLeaderboardRecordsRequest.newBuilder().setLeaderboardId(leaderboardId);
+        val builder = ListLeaderboardRecordsRequest.newBuilder().setLeaderboardId(leaderboardId);
         if (ownerIds != null) {
             builder.addAllOwnerIds(ownerIds);
         }
@@ -900,7 +908,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecordList> listLeaderboardRecordsAroundOwner(final Session session, final String leaderboardId, final String ownerId, final int expiry, final int limit) {
-        final var builder = ListLeaderboardRecordsAroundOwnerRequest.newBuilder().setLeaderboardId(leaderboardId).setOwnerId(ownerId);
+        val builder = ListLeaderboardRecordsAroundOwnerRequest.newBuilder().setLeaderboardId(leaderboardId).setOwnerId(ownerId);
         if (expiry > 0) {
             builder.setExpiry(Int64Value.newBuilder().setValue(expiry).build());
         }
@@ -932,7 +940,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<MatchList> listMatches(@NonNull final Session session, final int min, final int max, final int limit, final String label) {
-        final var builder = ListMatchesRequest.newBuilder();
+        val builder = ListMatchesRequest.newBuilder();
         if (min >= 0) {
             builder.setMinSize(Int32Value.newBuilder().setValue(min).build());
         }
@@ -950,7 +958,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<MatchList> listMatches(@NonNull final Session session, final int min, final int max, final int limit, final String label, final boolean authoritative) {
-        final var builder = ListMatchesRequest.newBuilder();
+        val builder = ListMatchesRequest.newBuilder();
         if (min >= 0) {
             builder.setMinSize(Int32Value.newBuilder().setValue(min).build());
         }
@@ -979,7 +987,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<com.heroiclabs.nakama.api.NotificationList> listNotifications(@NonNull final Session session, final int limit, final String cacheableCursor) {
-        final var builder = ListNotificationsRequest.newBuilder();
+        val builder = ListNotificationsRequest.newBuilder();
         if (limit > 0) {
             builder.setLimit(Int32Value.newBuilder().setValue(limit).build());
         }
@@ -1171,7 +1179,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<TournamentRecordList> listTournamentRecordsAroundOwner(final Session session, final String tournamentId, final String ownerId, final int expiry, final int limit) {
-        final var builder = ListTournamentRecordsAroundOwnerRequest.newBuilder().setTournamentId(tournamentId).setOwnerId(ownerId);
+        val builder = ListTournamentRecordsAroundOwnerRequest.newBuilder().setTournamentId(tournamentId).setOwnerId(ownerId);
         if (expiry > 0) {
             builder.setExpiry(Int64Value.newBuilder().setValue(expiry).build());
         }
@@ -1188,7 +1196,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<UserGroupList> listUserGroups(@NonNull final Session session, final String userId) {
-        final var builder = ListUserGroupsRequest.newBuilder();
+        val builder = ListUserGroupsRequest.newBuilder();
         if (userId != null) {
             builder.setUserId(userId);
         }
@@ -1207,7 +1215,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<StorageObjectList> listUsersStorageObjects(@NonNull final Session session, @NonNull final String collection, final String userId, final int limit, final String cursor) {
-        final var builder = ListStorageObjectsRequest.newBuilder().setCollection(collection);
+        val builder = ListStorageObjectsRequest.newBuilder().setCollection(collection);
         if (userId != null) {
             builder.setUserId(userId);
         }
@@ -1222,7 +1230,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> promoteGroupUsers(@NonNull final Session session, @NonNull final String groupId, @NonNull final String... ids) {
-        final var userIds = Arrays.asList(ids);
+        val userIds = Arrays.asList(ids);
         return getStub(session).promoteGroupUsers(PromoteGroupUsersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build());
     }
 
@@ -1253,7 +1261,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Rpc> rpc(@NonNull final Session session, @NonNull final String id, final String payload) {
-        final var builder = Rpc.newBuilder().setId(id);
+        val builder = Rpc.newBuilder().setId(id);
         if (payload != null) {
             builder.setPayload(payload);
         }
@@ -1343,7 +1351,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> updateAccount(@NonNull final Session session, final String username, final String displayName, final String avatarUrl, final String langTag, final String location, final String timezone) {
-        final var builder = UpdateAccountRequest.newBuilder();
+        val builder = UpdateAccountRequest.newBuilder();
         if (username != null) {
             builder.setUsername(StringValue.newBuilder().setValue(username).build());
         }
@@ -1382,7 +1390,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> updateGroup(@NonNull final Session session, @NonNull final String groupId, final String name, final String description, final String avatarUrl, final String langTag) {
-        final var builder = UpdateGroupRequest.newBuilder().setGroupId(groupId);
+        val builder = UpdateGroupRequest.newBuilder().setGroupId(groupId);
         if (name != null) {
             builder.setName(StringValue.newBuilder().setValue(name).build());
         }
@@ -1400,7 +1408,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Empty> updateGroup(@NonNull final Session session, @NonNull final String groupId, final String name, final String description, final String avatarUrl, final String langTag, final boolean open) {
-        final var builder = UpdateGroupRequest.newBuilder().setGroupId(groupId);
+        val builder = UpdateGroupRequest.newBuilder().setGroupId(groupId);
         if (name != null) {
             builder.setName(StringValue.newBuilder().setValue(name).build());
         }
@@ -1419,16 +1427,16 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeLeaderboardRecord(@NonNull final Session session, @NonNull final String leaderboardId, final long score) {
-        final var builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
-        final var recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder().setScore(score);
+        val builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
+        val recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder().setScore(score);
         builder.setRecord(recordBuilder.build());
         return getStub(session).writeLeaderboardRecord(builder.build());
     }
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeLeaderboardRecord(@NonNull final Session session, @NonNull final String leaderboardId, final long score, final long subscore) {
-        final var builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
-        final var recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
+        val builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
+        val recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
                 .setScore(score)
                 .setSubscore(subscore);
         builder.setRecord(recordBuilder.build());
@@ -1437,8 +1445,8 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeLeaderboardRecord(@NonNull final Session session, @NonNull final String leaderboardId, final long score, final String metadata) {
-        final var builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
-        final var recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
+        val builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
+        val recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
                 .setScore(score)
                 .setMetadata(metadata);
         builder.setRecord(recordBuilder.build());
@@ -1447,8 +1455,8 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeLeaderboardRecord(@NonNull final Session session, @NonNull final String leaderboardId, final long score, final long subscore, final String metadata) {
-        final var builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
-        final var recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
+        val builder = WriteLeaderboardRecordRequest.newBuilder().setLeaderboardId(leaderboardId);
+        val recordBuilder = WriteLeaderboardRecordRequest.LeaderboardRecordWrite.newBuilder()
                 .setScore(score)
                 .setSubscore(subscore)
                 .setMetadata(metadata);
@@ -1483,16 +1491,16 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeTournamentRecord(@NonNull final Session session, @NonNull final String tournamentId, final long score) {
-        final var builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
-        final var recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder().setScore(score);
+        val builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
+        val recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder().setScore(score);
         builder.setRecord(recordBuilder.build());
         return getStub(session).writeTournamentRecord(builder.build());
     }
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeTournamentRecord(@NonNull final Session session, @NonNull final String tournamentId, final long score, final long subscore) {
-        final var builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
-        final var recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
+        val builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
+        val recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
                 .setScore(score)
                 .setSubscore(subscore);
         builder.setRecord(recordBuilder.build());
@@ -1501,8 +1509,8 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeTournamentRecord(@NonNull final Session session, @NonNull final String tournamentId, final long score, @NonNull final String metadata) {
-        final var builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
-        final var recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
+        val builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
+        val recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
                 .setScore(score)
                 .setMetadata(metadata);
         builder.setRecord(recordBuilder.build());
@@ -1511,8 +1519,8 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<LeaderboardRecord> writeTournamentRecord(@NonNull final Session session, @NonNull final String tournamentId, final long score, final long subscore, @NonNull final String metadata) {
-        final var builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
-        final var recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
+        val builder = WriteTournamentRecordRequest.newBuilder().setTournamentId(tournamentId);
+        val recordBuilder = WriteTournamentRecordRequest.TournamentRecordWrite.newBuilder()
                 .setScore(score)
                 .setSubscore(subscore)
                 .setMetadata(metadata);

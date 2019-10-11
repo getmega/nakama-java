@@ -6,6 +6,11 @@ The format is based on [keep a changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased]
 
+## [2.0.2] - 2019-10-11
+### Changed
+- Updated the GRPC version to 1.21
+- Updated Lombok version to 1.18.10: updated `final var` to `val`
+
 ## [2.0.1] - 2019-06-19
 ### Added
 - Add support for listing expired leaderboard/tournament records.
