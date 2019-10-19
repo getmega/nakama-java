@@ -199,16 +199,26 @@ def pomConfig = {
  }
 
  publishing {
+     repositories {
+         maven {
+             name "myMavenRepo"
+             url "https://mymavenrepo.com/repo/i2OFvbDBO06cxG9PAcae"
+             credentials {
+                 username "myMavenRepo"
+                 password "Th44En4RHU75ifk"
+             }
+         }
+     }
      publications {
-         mavenJava(MavenPublication) {
+         nakama(MavenPublication) {
              from components.java
 
              artifact sourcesJar {
                  classifier 'sources'
              }
-             artifact javadocJar {
-                 classifier 'javadoc'
-             }
+//             artifact javadocJar {
+//                 classifier 'javadoc'
+//             }
 
              groupId "$project.group"
              artifactId 'client'
@@ -232,6 +242,6 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-task javadocJar(type: Jar) {
-    from javadoc
-}
+//task javadocJar(type: Jar) {
+//    from javadoc
+//}
