@@ -54,16 +54,16 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.10'
     compile 'com.google.code.gson:gson:2.8.5'
-    compileOnly 'com.google.protobuf:protobuf-lite:3.0.1'
+    compile 'com.google.protobuf:protobuf-lite:3.0.1'
     compile ('io.grpc:grpc-okhttp:1.21.0') {
         exclude group: 'com.squareup.okio', module:'okio'
     }
     compile 'com.squareup.okio:okio:1.15.0'
     compile 'com.squareup.okhttp3:okhttp:3.11.0'
-    compileOnly 'io.grpc:grpc-protobuf-lite:1.21.0'
-    compileOnly 'io.grpc:grpc-stub:1.21.0'
+    compile 'io.grpc:grpc-protobuf-lite:1.21.0'
+    compile 'io.grpc:grpc-stub:1.21.0'
     compile 'javax.annotation:javax.annotation-api:1.3.2'
-    compileOnly ('com.google.api.grpc:googleapis-common-protos:0.0.3') {
+    compile ('com.google.api.grpc:googleapis-common-protos:0.0.3') {
         exclude group: 'io.grpc', module:'grpc-protobuf'
     }
     compile ('org.slf4j:slf4j-api:1.7.25') {
@@ -225,13 +225,13 @@ def pomConfig = {
              artifactId 'client'
              version "$project.version"
 
-//             pom.withXml {
-//                 def root = asNode()
-//                 root.appendNode('description', description)
-//                 root.appendNode('name', 'Nakama client')
-//                 root.appendNode('url', 'https://heroiclabs.com/docs/android-java-client-guide/')
-//                 root.children().last() + pomConfig
-//             }
+             pom.withXml {
+                 def root = asNode()
+                 root.appendNode('description', description)
+                 root.appendNode('name', 'Nakama client')
+                 root.appendNode('url', 'https://heroiclabs.com/docs/android-java-client-guide/')
+                 root.children().last() + pomConfig
+             }
          }
      }
  }
