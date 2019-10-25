@@ -4,12 +4,25 @@ All notable changes to this project are documented below.
 
 The format is based on [keep a changelog](http://keepachangelog.com/) and this project uses [semantic versioning](http://semver.org/).
 
-## [Unreleased]
-
-## [2.0.2] - 2019-10-11
+## Fork Changes:
 ### Changed
 - Updated the GRPC version to 1.21
 - Updated Lombok version to 1.18.10: updated `final var` to `val`
+
+## [Unreleased]
+
+## [2.0.3] - 2019-10-25
+### Added
+- More ways to create a socket connection.
+
+### Fixed
+- Correctly decode UserPresence from payload.
+
+## [2.0.2] - 2019-10-14
+### Added
+- Add support for session vars.
+- Add support for sending metadata when joining a match with an ID.
+- Add pagination support for friends and groups.
 
 ## [2.0.1] - 2019-06-19
 ### Added

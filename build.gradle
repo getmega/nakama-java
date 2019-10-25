@@ -37,7 +37,7 @@ plugins {
 
 group = 'com.heroiclabs.nakama'
 def localVersion = 4
-version = "2.0.2-SNAPSHOT-$localVersion"
+version = "2.0.4-SNAPSHOT-$localVersion"
 def description = 'Android optimized Java client for Nakama server.'
 def gopath = System.getenv('GOPATH')
 sourceCompatibility = 1.7
@@ -217,9 +217,9 @@ def pomConfig = {
              artifact sourcesJar {
                  classifier 'sources'
              }
-//             artifact javadocJar {
-//                 classifier 'javadoc'
-//             }
+             artifact javadocJar {
+                 classifier 'javadoc'
+             }
 
              groupId "$project.group"
              artifactId 'client'
