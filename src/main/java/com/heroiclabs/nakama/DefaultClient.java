@@ -792,7 +792,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<Group> createGroup(@NonNull final Session session, @NonNull final String name, final String description, final String avatarUrl, final String langTag, final boolean open, final int maxCount) {
-        final var builder = CreateGroupRequest.newBuilder().setName(name).setOpen(open);
+        val builder = CreateGroupRequest.newBuilder().setName(name).setOpen(open);
 
         if (description != null) {
             builder.setDescription(description);
@@ -1037,7 +1037,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<FriendList> listFriends(@NonNull final Session session, final int state, final int limit, final String cursor) {
-        final var builder = ListFriendsRequest.newBuilder();
+        val builder = ListFriendsRequest.newBuilder();
 
         if (state > -1) {
             builder.setState(Int32Value.newBuilder().setValue(state).build());
@@ -1059,7 +1059,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<GroupUserList> listGroupUsers(@NonNull final Session session, @NonNull final String groupId, final int state, final int limit, final String cursor) {
-        final var builder = ListGroupUsersRequest.newBuilder();
+        val builder = ListGroupUsersRequest.newBuilder();
 
         if (state > -1) {
             builder.setState(Int32Value.newBuilder().setValue(state).build());
@@ -1445,7 +1445,7 @@ public class DefaultClient implements Client {
 
     @Override
     public ListenableFuture<UserGroupList> listUserGroups(@NonNull final Session session, final String userId, int state, int limit, String cursor) {
-        final var builder = ListUserGroupsRequest.newBuilder();
+        val builder = ListUserGroupsRequest.newBuilder();
 
         if (state > -1) {
             builder.setState(Int32Value.newBuilder().setValue(state).build());

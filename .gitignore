@@ -2,7 +2,10 @@
 
 /src/main/proto/*
 build/*
-!build/generated/source/*
+!build/generated
+
+build/generated/*
+!build/generated/source
 
 ### Custom ###
 .BINTRAY
