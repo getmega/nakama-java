@@ -36,8 +36,8 @@ plugins {
 }
 
 group = 'com.heroiclabs.nakama'
-def localVersion = 4
-version = "2.0.4-SNAPSHOT-$localVersion"
+def localVersion = 2
+version = "2.0.3-GETMEGA-$localVersion"
 def description = 'Android optimized Java client for Nakama server.'
 def gopath = System.getenv('GOPATH')
 sourceCompatibility = 1.7
@@ -63,7 +63,7 @@ dependencies {
     compile 'io.grpc:grpc-protobuf-lite:1.21.0'
     compile 'io.grpc:grpc-stub:1.21.0'
     compile 'javax.annotation:javax.annotation-api:1.3.2'
-    compile ('com.google.api.grpc:googleapis-common-protos:0.0.3') {
+    compileOnly ('com.google.api.grpc:googleapis-common-protos:0.0.3') {
         exclude group: 'io.grpc', module:'grpc-protobuf'
     }
     compile ('org.slf4j:slf4j-api:1.7.25') {
@@ -217,9 +217,9 @@ def pomConfig = {
              artifact sourcesJar {
                  classifier 'sources'
              }
-             artifact javadocJar {
-                 classifier 'javadoc'
-             }
+//             artifact javadocJar {
+//                 classifier 'javadoc'
+//             }
 
              groupId "$project.group"
              artifactId 'client'

@@ -154,7 +154,7 @@ public class WebSocketClient implements SocketClient {
                         @Override
                         public void run() {
                             if (env.getError() != null) {
-                                listener.onError(new DefaultError(collationId, env.getError()));
+                                listener.onError(new DefaultError("", env.getError()));
                             } else if (env.getChannelMessage() != null) {
                                 final ChannelMessage m = env.getChannelMessage();
                                 final com.heroiclabs.nakama.api.ChannelMessage.Builder builder = com.heroiclabs.nakama.api.ChannelMessage.newBuilder();
