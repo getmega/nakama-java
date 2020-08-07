@@ -40,7 +40,7 @@ plugins {
 
 group = 'com.heroiclabs.nakama'
 def localVersion = 2
-version = "2.0.3-GETMEGA-$localVersion"
+version = "2.0.5-GETMEGA-$localVersion"
 def description = 'Android optimized Java client for Nakama server.'
 
 sourceCompatibility = 1.8
