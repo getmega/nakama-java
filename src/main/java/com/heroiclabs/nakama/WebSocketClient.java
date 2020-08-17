@@ -160,7 +160,7 @@ public class WebSocketClient implements SocketClient {
                     listenerThreadPoolExec.execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (env.getError() != null) {
+                            if (env.getError() != null && collationId != null) {
                                 listener.onError(new DefaultError(collationId, env.getError()));
                             } else if (env.getChannelMessage() != null) {
                                 final ChannelMessage m = env.getChannelMessage();
