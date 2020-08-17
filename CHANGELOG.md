@@ -4,11 +4,6 @@ All notable changes to this project are documented below.
 
 The format is based on [keep a changelog](http://keepachangelog.com/) and this project uses [semantic versioning](http://semver.org/).
 
-## Fork Changes:
-### Changed
-- Updated the GRPC version to 1.21
-- Updated Lombok version to 1.18.10: updated `final var` to `val`
-
 ## [Unreleased]
 
 - Moved all external .proto dependencies into this repository.
