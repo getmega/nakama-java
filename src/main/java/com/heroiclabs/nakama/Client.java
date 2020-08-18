@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 The Nakama Authors
+ * Copyright 2020 The Nakama Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,6 +86,17 @@ public interface Client {
      * @return a new SocketClient instance.
      */
     SocketClient createSocket(final String host, final int port, final boolean ssl, final int socketTimeoutMs);
+
+    /**
+     * Create a new socket from the client.
+     * @param host The host URL of the server.
+     * @param port The port number of the server. Default should be 7350.
+     * @param ssl Whether to use SSL to connect to the server.
+     * @param socketTimeoutMs Sets the connect, read and write timeout for new connections.
+     * @param socketPingMs The interval at which to send Ping frames to the server.
+     * @return a new SocketClient instance.
+     */
+    SocketClient createSocket(final String host, final int port, final boolean ssl, final int socketTimeoutMs, final int socketPingMs);
 
     /**
      * Add one or more friends by id.
@@ -510,6 +521,15 @@ public interface Client {
      * @return A future to resolve a session object.
      */
     ListenableFuture<Session> authenticateGameCenter(@NonNull final String playerId, @NonNull final String bundleId, final long timestampSeconds, @NonNull final String salt, @NonNull final String signature, @NonNull final String publicKeyUrl, final boolean create, final String username, @NonNull final Map<String, String> vars);
+
+    /**
+     * Bans a user from a group. This will prevent the user from being able to rejoin the group.
+     * @param session The session of the user.
+     * @param groupId The group to ban the users from.
+     * @param ids The users to ban from the group..
+     * @return A future.
+     */
+    public ListenableFuture<Empty> banGroupUsers(@NonNull final Session session, @NonNull String groupId, @NonNull final String... ids);
 
     /**
      * Block one or more friends by id.
